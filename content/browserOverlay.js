@@ -22,6 +22,13 @@ var AgogoChase = {
             return;
         }
 
-        alert('show agogo here');
+        var agogo = doc.createElement('div');
+        agogo.style.background = 'black';
+        agogo.style.position = 'fixed';
+        agogo.style.left = '300px';
+        agogo.style.top = '300px';
+        agogo.style.height = '100px';
+        agogo.style.width = '100px';
+        doc.body.appendChild(agogo);
     },
 };
