@@ -4,6 +4,13 @@
     width: 96px;
 }
 
+#agogo-chase-target {
+    position: fixed;
+    background: red;
+    height: 3px;
+    width: 3px;
+}
+
 .agogo-running {
     animation: agogo-running-keyframes .2s steps(3) infinite alternate;
 }
