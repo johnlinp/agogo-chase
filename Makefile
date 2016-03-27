@@ -1,5 +1,5 @@
 PROJECT_NAME = agogochase
-FILES = chrome.manifest install.rdf content locale skin
+FILES = manifest.json js css icons
 XPI = $(PROJECT_NAME).xpi
 
 .PHONY: all clean
