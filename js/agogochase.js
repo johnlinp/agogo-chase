@@ -12,7 +12,6 @@
     restPlace: null,
     curTarget: null,
     agogo: null,
-    target: null,
     grassList: [],
     main: function() {
         var keyword = 'agogo';
@@ -27,7 +26,6 @@
         this.setMouseListener();
 
         this.makeAgogo();
-        this.makeTarget();
         this.setAgogoBeginAndRestPosition();
 
         this.startChasing();
@@ -88,11 +86,6 @@
         var firstGrass = this.grassList[0];
         firstGrass.style.visibility = 'hidden';
     },
-    makeTarget: function() {
-        this.target = document.createElement('div');
-        this.target.setAttribute('id', 'agogo-chase-target');
-        document.body.appendChild(this.target);
-    },
     makeAgogo: function() {
         this.agogo = document.createElement('div');
         this.agogo.setAttribute('id', 'agogo-chase-agogo');
@@ -106,13 +99,9 @@
 
         setInterval(function() {
             me.updateAgogo();
-            me.updateTarget();
             me.updateGrass();
             //console.log(me.state);
         }, this.updateRate);
-    },
-    updateTarget: function() {
-        this.setElementLeftTop(this.target, this.curTarget.x, this.curTarget.y);
     },
     updateGrass: function() {
         var me = this;
