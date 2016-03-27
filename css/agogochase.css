@@ -27,6 +27,10 @@
     background: url(../images/agogo-resting.svg);
 }
 
+.agogo-smell-grass {
+    background: url(../images/agogo-smell-grass.svg);
+}
+
 .agogo-running {
     animation: agogo-running-keyframes .2s steps(3) infinite alternate;
 }

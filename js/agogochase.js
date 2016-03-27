@@ -57,8 +57,11 @@
             this.state = 'running-to-grass';
             this.aimFirstGrass();
         } else if (this.state == 'resting') {
-            this.state = 'heard-grass';
+            this.state = 'smell-grass';
+            this.makeSureClass(this.agogo, 'agogo-resting', false);
+            this.makeSureClass(this.agogo, 'agogo-smell-grass', true);
             setTimeout(function() {
+                me.makeSureClass(me.agogo, 'agogo-smell-grass', false);
                 me.state = 'running-to-grass';
                 me.aimFirstGrass();
             }, this.reactGrassTime);
