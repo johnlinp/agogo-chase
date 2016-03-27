@@ -10,7 +10,7 @@
     "applications": {
         "gecko": {
             "id": "agogochase@johnlin.tw",
-            "strict_min_version": "45.0.0"
+            "strict_min_version": "45.*"
         }
     },
     "content_scripts": [
