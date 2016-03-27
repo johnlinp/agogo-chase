@@ -35,7 +35,7 @@
     setMouseListener: function() {
         var me = this;
         document.addEventListener('mouseup', function(evt) {
-            me.makeGrass(evt.pageX, evt.pageY);
+            me.makeGrass(evt.pageX - pageXOffset, evt.pageY - pageYOffset);
             me.noticeGrass();
         });
     },
