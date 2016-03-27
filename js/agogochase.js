@@ -6,8 +6,9 @@
     fallDistance: 60, // in pixels, for grass
     fallSpeed: 5, // in pixels, for grass
     reactGrassTime: 2000, // in milliseconds
-    eatingTime: 5000, // in milliseconds
+    eatingTime: 4000, // in milliseconds
     state: 'init',
+    direction: null,
     restPlace: null,
     curTarget: null,
     agogo: null,
@@ -79,6 +80,14 @@
             y: fallTop,
         };
     },
+    hideFirstGrass: function() {
+        if (this.grassList.length == 0) {
+            return;
+        }
+
+        var firstGrass = this.grassList[0];
+        firstGrass.style.visibility = 'hidden';
+    },
     makeTarget: function() {
         this.target = document.createElement('div');
         this.target.setAttribute('id', 'agogo-chase-target');
@@ -99,7 +108,7 @@
             me.updateAgogo();
             me.updateTarget();
             me.updateGrass();
-            console.log(me.state);
+            //console.log(me.state);
         }, this.updateRate);
     },
     updateTarget: function() {
@@ -116,21 +125,34 @@
             me.setElementLeftTop(grass, rect.left, rect.top + me.fallSpeed);
         });
     },
-    addAgogoRunningClass: function(targetClassName) {
+    updateAgogoActionClass: function(targetAction) {
         var me = this;
-        var allClassNames = [
-            'agogo-running-right',
-            'agogo-running-left',
+        var className = null;
+        var allActions = [
+            'running',
+            'eating',
+        ];
+        var allDirections = [
+            'left',
+            'right',
         ];
 
-        this.makeSureClass(this.agogo, 'agogo-running', true);
-
-        allClassNames.forEach(function(iterClassName) {
-            if (iterClassName == targetClassName) {
-                me.makeSureClass(me.agogo, iterClassName, true);
+        allActions.forEach(function(iterAction) {
+            className = 'agogo-' + iterAction;
+            if (iterAction == targetAction) {
+                me.makeSureClass(me.agogo, className, true);
             } else {
-                me.makeSureClass(me.agogo, iterClassName, false);
+                me.makeSureClass(me.agogo, className, false);
             }
+
+            allDirections.forEach(function(iterDirection) {
+                className = 'agogo-' + iterAction + '-' + iterDirection;
+                if (iterAction == targetAction && iterDirection == me.direction) {
+                    me.makeSureClass(me.agogo, className, true);
+                } else {
+                    me.makeSureClass(me.agogo, className, false);
+                }
+            });
         });
     },
     makeSureClass: function(element, className, shouldExist) {
@@ -158,10 +180,11 @@
         }
 
         if (centerX < this.curTarget.x) {
-            this.addAgogoRunningClass('agogo-running-right');
+            this.direction = 'right';
         } else {
-            this.addAgogoRunningClass('agogo-running-left');
+            this.direction = 'left';
         }
+        this.updateAgogoActionClass('running');
 
         var ratio = this.moveSpeed / distance;
         var newLeft = rect.left + (this.curTarget.x - centerX) * ratio;
@@ -173,8 +196,12 @@
         var me = this;
         if (this.state == 'running-to-rest') {
             this.state = 'resting';
+            this.makeSureClass(this.agogo, 'agogo-running', false);
+            this.makeSureClass(this.agogo, 'agogo-resting', true);
         } else if (this.state == 'running-to-grass') {
             this.state = 'eating';
+            this.updateAgogoActionClass('eating');
+            this.hideFirstGrass();
             setTimeout(function() {
                 var oldGrass = me.grassList.shift();
                 document.body.removeChild(oldGrass);

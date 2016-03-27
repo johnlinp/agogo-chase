@@ -30,15 +30,19 @@
     background: url(../images/grass-3.svg);
 }
 
+.agogo-resting {
+    background: url(../images/agogo-resting.svg);
+}
+
 .agogo-running {
     animation: agogo-running-keyframes .2s steps(3) infinite alternate;
 }
 
-.agogo-running-left {
+.agogo-running.agogo-running-left {
     background: url(../images/agogo-running-left.svg) no-repeat;
 }
 
-.agogo-running-right {
+.agogo-running.agogo-running-right {
     background: url(../images/agogo-running-right.svg) no-repeat;
 }
 
@@ -46,3 +50,21 @@
     from { background-position:  0px; }
     to { background-position: -288px; }
 }
+
+.agogo-eating {
+    animation: agogo-eating-keyframes .2s steps(3) infinite alternate;
+}
+
+.agogo-eating.agogo-eating-left {
+    background: url(../images/agogo-eating-left.svg) no-repeat;
+}
+
+.agogo-eating.agogo-eating-right {
+    background: url(../images/agogo-eating-right.svg) no-repeat;
+}
+
+@keyframes agogo-eating-keyframes {
+    from { background-position:  0px; }
+    to { background-position: -288px; }
+}
+
