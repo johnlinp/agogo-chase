@@ -12,6 +12,7 @@
     restPlace: null,
     curTarget: null,
     agogo: null,
+    chair: null,
     grassList: [],
     main: function() {
         var keyword = 'agogo';
@@ -23,11 +24,12 @@
             return;
         }
 
+        this.preloadImages();
+
         this.setMouseListener();
 
         this.makeAgogo();
-        this.setAgogoBeginAndRestPosition();
-
+        this.initAgogoSettings();
         this.startChasing();
     },
     setMouseListener: function() {
@@ -207,43 +209,109 @@
             }, this.eatingTime);
         }
     },
-    setAgogoBeginAndRestPosition: function() {
+    initAgogoSettings: function() {
         var place = this.getRandomInt(4);
+        this.setAgogoStartPosition(place);
+        this.makeChair(place);
+        this.setRestPlace(place);
+    },
+    setAgogoStartPosition: function(place) {
         var agogoWidth = this.agogo.offsetWidth;
         var agogoHeight = this.agogo.offsetHeight;
-        var randomLeft = this.getRandomInt(screen.width - agogoWidth);
-        var randomTop = this.getRandomInt(screen.height - agogoHeight);
+        var randomLeft = this.getRandomInt(window.innerWidth - agogoWidth);
+        var randomTop = this.getRandomInt(window.innerHeight - agogoHeight);
 
         switch (place) {
             case 0: // top
                 this.setElementLeftTop(this.agogo, randomLeft, -agogoWidth);
-                this.restPlace = {
-                    x: screen.width - agogoWidth / 2,
-                    y: screen.height - agogoHeight - agogoHeight / 2,
-                };
                 break;
             case 1: // left
                 this.setElementLeftTop(this.agogo, -agogoHeight, randomTop);
-                this.restPlace = {
-                    x: screen.width - agogoWidth / 2,
-                    y: agogoHeight / 2,
-                };
                 break;
             case 2: // right
-                this.setElementLeftTop(this.agogo, screen.width, randomTop);
-                this.restPlace = {
-                    x: agogoWidth / 2,
-                    y: screen.height - agogoHeight - agogoHeight / 2,
-                };
+                this.setElementLeftTop(this.agogo, window.innerWidth, randomTop);
                 break;
             case 3: // bottom
-                this.setElementLeftTop(this.agogo, randomLeft, screen.height);
+                this.setElementLeftTop(this.agogo, randomLeft, window.innerHeight);
+                break;
+        }
+    },
+    makeChair: function(place) {
+        this.chair = document.createElement('div');
+        this.chair.setAttribute('id', 'agogo-chase-chair');
+        document.body.appendChild(this.chair);
+
+        var rect = this.chair.getBoundingClientRect();
+
+        switch (place) {
+            case 0: // top: bottom-right
+                this.setElementLeftTop(this.chair, window.innerWidth - rect.width, window.innerHeight - rect.height);
+                break;
+            case 1: // left: top-right
+                this.setElementLeftTop(this.chair, window.innerWidth - rect.width, 0);
+                break;
+            case 2: // right: bottom-left
+                this.setElementLeftTop(this.chair, 0, window.innerHeight - rect.height);
+                break;
+            case 3: // bottom: top-left
+                this.setElementLeftTop(this.chair, 0, 0);
+                break;
+        }
+
+        this.chair.style.visibility = 'visible';
+    },
+    setRestPlace: function(place) {
+        var agogoWidth = this.agogo.offsetWidth;
+        var agogoHeight = this.agogo.offsetHeight;
+        var chairHeight = this.chair.offsetHeight;
+
+        switch (place) {
+            case 0: // top: bottom-right
+                this.restPlace = {
+                    x: window.innerWidth - agogoWidth / 2,
+                    y: window.innerHeight - agogoHeight / 2,
+                };
+                break;
+            case 1: // left: top-right
+                this.restPlace = {
+                    x: window.innerWidth - agogoWidth / 2,
+                    y: chairHeight - agogoHeight / 2,
+                };
+                break;
+            case 2: // right: bottom-left
                 this.restPlace = {
                     x: agogoWidth / 2,
-                    y: agogoHeight / 2,
+                    y: window.innerHeight - agogoHeight / 2,
+                };
+                break;
+            case 3: // bottom: top-left
+                this.restPlace = {
+                    x: agogoWidth / 2,
+                    y: chairHeight - agogoHeight / 2,
                 };
                 break;
         }
+    },
+    preloadImages: function() {
+        var images = [
+            'agogo-resting.svg',
+            'agogo-smell-grass.svg',
+            'agogo-running-left.svg',
+            'agogo-running-right.svg',
+            'agogo-eating-left.svg',
+            'agogo-eating-right.svg',
+            'grass-1.svg',
+            'grass-2.svg',
+            'grass-3.svg',
+            'chair.svg',
+        ];
+
+        images.forEach(function(image) {
+            var img = document.createElement('img');
+            img.src = '../images/' + image;
+            img.style.visibility = 'hidden';
+            document.body.appendChild(img);
+        });
     },
     getRandomInt: function(range) {
         return Math.floor((Math.random() * range));

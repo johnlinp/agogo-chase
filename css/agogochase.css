@@ -4,6 +4,14 @@
     width: 96px;
 }
 
+#agogo-chase-chair {
+    position: fixed;
+    height: 192px;
+    width: 120px;
+    visibility: hidden;
+    background: url(../images/chair.svg);
+}
+
 .agogo-chase-grass {
     position: fixed;
     height: 12px;
