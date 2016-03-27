@@ -11,6 +11,7 @@
 
         var agogo = document.createElement('div');
         agogo.setAttribute('id', 'agogo-chase');
+        agogo.className += 'agogo-running-left';
         document.body.appendChild(agogo);
     },
 }).main();
