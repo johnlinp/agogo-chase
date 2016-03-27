@@ -1,4 +1,4 @@
-#agogo-chase {
+#agogo-chase-agogo {
     position: fixed;
     height: 96px;
     width: 96px;
@@ -9,6 +9,25 @@
     background: red;
     height: 3px;
     width: 3px;
+}
+
+.agogo-chase-grass {
+    position: fixed;
+    height: 12px;
+    width: 48px;
+    visibility: hidden;
+}
+
+.agogo-chase-grass-1 {
+    background: url(../images/grass-1.svg);
+}
+
+.agogo-chase-grass-2 {
+    background: url(../images/grass-2.svg);
+}
+
+.agogo-chase-grass-3 {
+    background: url(../images/grass-3.svg);
 }
 
 .agogo-running {

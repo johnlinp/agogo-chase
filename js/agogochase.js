@@ -1,12 +1,16 @@
 'use strict';
 ({
     updateRate: 50, // in milliseconds
-    moveDistance: 20, // in pixels
-    closeDistance: 30, // in pixels
+    moveSpeed: 20, // in pixels, for agogo
+    closeDistance: 30, // in pixels, for agogo
+    fallDistance: 60, // in pixels, for grass
+    fallSpeed: 5, // in pixels, for grass
+    state: 'init',
     restPlace: null,
     curTarget: null,
     agogo: null,
     target: null,
+    grassList: [],
     main: function() {
         var keyword = 'agogo';
         var url = document.location.href;
@@ -17,7 +21,7 @@
             return;
         }
 
-        this.setMouseMoveListener();
+        this.setMouseListener();
 
         this.makeAgogo();
         this.makeTarget();
@@ -25,11 +29,25 @@
 
         this.startChasing();
     },
-    setMouseMoveListener: function() {
+    setMouseListener: function() {
         var me = this;
-        document.addEventListener('mouseclick', function(evt) {
-            // drop grass
+        document.addEventListener('mouseup', function(evt) {
+            me.makeGrass(evt.pageX, evt.pageY);
         });
+    },
+    makeGrass: function(mouseX, mouseY) {
+        var grass = document.createElement('div');
+        var grassNumber = this.getRandomInt(3) + 1;
+        grass.classList.add('agogo-chase-grass');
+        grass.classList.add('agogo-chase-grass-' + grassNumber);
+        document.body.appendChild(grass);
+
+        var rect = grass.getBoundingClientRect();
+        this.setElementLeftTop(grass, mouseX - rect.width / 2, mouseY - rect.height / 2);
+        grass.setAttribute('data-fall-top', mouseY + this.fallDistance);
+        grass.style.visibility = 'visible';
+
+        this.grassList.push(grass);
     },
     makeTarget: function() {
         this.target = document.createElement('div');
@@ -38,54 +56,66 @@
     },
     makeAgogo: function() {
         this.agogo = document.createElement('div');
-        this.agogo.setAttribute('id', 'agogo-chase');
-        this.agogo.classList.add('agogo-running');
+        this.agogo.setAttribute('id', 'agogo-chase-agogo');
         document.body.appendChild(this.agogo);
     },
     startChasing: function() {
         var me = this;
+
         this.curTarget = this.restPlace;
+        this.state = 'running-to-rest';
+
         setInterval(function() {
             me.updateAgogo();
             me.updateTarget();
+            me.updateGrass();
+            console.log(me.state);
         }, this.updateRate);
     },
     updateAgogo: function() {
         this.moveAgogoPosition();
-        this.changeAgogoClass();
     },
     updateTarget: function() {
-        this.target.style.left = this.curTarget.x + 'px';
-        this.target.style.top = this.curTarget.y + 'px';
+        this.setElementLeftTop(this.target, this.curTarget.x, this.curTarget.y);
     },
-    changeAgogoClass: function() {
-        var rect = this.agogo.getBoundingClientRect();
-        var centerX = rect.left + rect.width / 2;
-
-        if (centerX < this.curTarget.x) {
-            this.addAgogoClass('agogo-running-right');
-        } else {
-            this.addAgogoClass('agogo-running-left');
-        }
+    updateGrass: function() {
+        var me = this;
+        this.grassList.forEach(function(grass) {
+            var rect = grass.getBoundingClientRect();
+            var targetTop = parseInt(grass.getAttribute('data-fall-top'));
+            if (rect.top > targetTop) {
+                return;
+            }
+            me.setElementLeftTop(grass, rect.left, rect.top + me.fallSpeed);
+        });
     },
-    addAgogoClass: function(targetClassName) {
+    addAgogoRunningClass: function(targetClassName) {
         var me = this;
         var allClassNames = [
             'agogo-running-right',
             'agogo-running-left',
         ];
 
+        this.makeSureClass(this.agogo, 'agogo-running', true);
+
         allClassNames.forEach(function(iterClassName) {
             if (iterClassName == targetClassName) {
-                if (!me.agogo.classList.contains(iterClassName)) {
-                    me.agogo.classList.add(iterClassName);
-                }
+                me.makeSureClass(me.agogo, iterClassName, true);
             } else {
-                if (me.agogo.classList.contains(iterClassName)) {
-                    me.agogo.classList.remove(iterClassName);
-                }
+                me.makeSureClass(me.agogo, iterClassName, false);
             }
         });
+    },
+    makeSureClass: function(element, className, shouldExist) {
+        if (element.classList.contains(className)) {
+            if (!shouldExist) {
+                element.classList.remove(className);
+            }
+        } else {
+            if (shouldExist) {
+                element.classList.add(className);
+            }
+        }
     },
     moveAgogoPosition: function(rect) {
         var rect = this.agogo.getBoundingClientRect();
@@ -98,58 +128,69 @@
         var distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
 
         if (distance < this.closeDistance) {
+            if (this.state == 'running-to-rest') {
+                this.state = 'resting';
+            } else if (this.state == 'running-to-grass') {
+                this.state = 'eating';
+            }
             return;
         }
 
-        console.log(distance);
+        if (centerX < this.curTarget.x) {
+            this.addAgogoRunningClass('agogo-running-right');
+        } else {
+            this.addAgogoRunningClass('agogo-running-left');
+        }
 
-        var ratio = this.moveDistance / distance;
+        var ratio = this.moveSpeed / distance;
         var newLeft = rect.left + (this.curTarget.x - centerX) * ratio;
         var newTop = rect.top + (this.curTarget.y - centerY) * ratio;
 
-        this.agogo.style.left = newLeft + 'px';
-        this.agogo.style.top = newTop + 'px';
+        this.setElementLeftTop(this.agogo, newLeft, newTop);
     },
     setAgogoBeginAndRestPosition: function() {
-        var place = Math.floor((Math.random() * 4));
+        var place = this.getRandomInt(4);
         var agogoWidth = this.agogo.offsetWidth;
         var agogoHeight = this.agogo.offsetHeight;
-        var randomLeft = Math.floor((Math.random() * (screen.width - agogoWidth)));
-        var randomTop = Math.floor((Math.random() * (screen.height - agogoHeight)));
+        var randomLeft = this.getRandomInt(screen.width - agogoWidth);
+        var randomTop = this.getRandomInt(screen.height - agogoHeight);
 
         switch (place) {
             case 0: // top
-                this.agogo.style.left = randomLeft + 'px';
-                this.agogo.style.top = '-' + agogoWidth + 'px';
+                this.setElementLeftTop(this.agogo, randomLeft, -agogoWidth);
                 this.restPlace = {
                     x: screen.width - agogoWidth / 2,
                     y: screen.height - agogoHeight - agogoHeight / 2,
                 };
                 break;
             case 1: // left
-                this.agogo.style.left = '-' + agogoHeight + 'px';
-                this.agogo.style.top = randomTop + 'px';
+                this.setElementLeftTop(this.agogo, -agogoHeight, randomTop);
                 this.restPlace = {
                     x: screen.width - agogoWidth / 2,
                     y: agogoHeight / 2,
                 };
                 break;
             case 2: // right
-                this.agogo.style.left = screen.width + 'px';
-                this.agogo.style.top = randomTop + 'px';
+                this.setElementLeftTop(this.agogo, screen.width, randomTop);
                 this.restPlace = {
                     x: agogoWidth / 2,
                     y: screen.height - agogoHeight - agogoHeight / 2,
                 };
                 break;
             case 3: // bottom
-                this.agogo.style.left = randomLeft + 'px';
-                this.agogo.style.top = screen.height + 'px';
+                this.setElementLeftTop(this.agogo, randomLeft, screen.height);
                 this.restPlace = {
                     x: agogoWidth / 2,
                     y: agogoHeight / 2,
                 };
                 break;
         }
+    },
+    getRandomInt: function(range) {
+        return Math.floor((Math.random() * range));
+    },
+    setElementLeftTop: function(element, left, top) {
+        element.style.left = left + 'px';
+        element.style.top = top + 'px';
     },
 }).main();
