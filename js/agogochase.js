@@ -2,7 +2,7 @@
 ({
     agogoLength: 96, // width and height of agogo
     agogoUpdateRate: 50, // in milliseconds
-    agogoMoveDistance: 10, // in pixels
+    agogoMoveDistance: 20, // in pixels
     agogoCloseDistance: 100, // in pixels
     mouseX: null,
     mouseY: null,
@@ -34,6 +34,7 @@
     makeAgogo: function() {
         this.agogo = document.createElement('div');
         this.agogo.setAttribute('id', 'agogo-chase');
+        this.agogo.classList.add('agogo-running');
         document.body.appendChild(this.agogo);
     },
     startChasing: function() {
@@ -47,13 +48,39 @@
             return;
         }
 
-        this.changeAgogoClass();
         this.moveAgogoPosition();
+        this.changeAgogoClass();
     },
     changeAgogoClass: function() {
-        if (!this.agogo.classList.contains('agogo-running-left')) {
-            this.agogo.classList.add('agogo-running-left');
+        var rect = this.agogo.getBoundingClientRect();
+
+        var centerX = rect.left + rect.width / 2;
+        var centerY = rect.top + rect.height / 2;
+
+        if (centerX < this.mouseX) {
+            this.addAgogoClass('agogo-running-right');
+        } else {
+            this.addAgogoClass('agogo-running-left');
         }
+    },
+    addAgogoClass: function(targetClassName) {
+        var me = this;
+        var allClassNames = [
+            'agogo-running-right',
+            'agogo-running-left',
+        ];
+
+        allClassNames.forEach(function(iterClassName) {
+            if (iterClassName == targetClassName) {
+                if (!me.agogo.classList.contains(iterClassName)) {
+                    me.agogo.classList.add(iterClassName);
+                }
+            } else {
+                if (me.agogo.classList.contains(iterClassName)) {
+                    me.agogo.classList.remove(iterClassName);
+                }
+            }
+        });
     },
     moveAgogoPosition: function(rect) {
         var rect = this.agogo.getBoundingClientRect();

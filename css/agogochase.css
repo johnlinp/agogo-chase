@@ -4,12 +4,19 @@
     width: 96px;
 }
 
-.agogo-running-left {
-    background: url(../images/agogo-running-left.svg) no-repeat;
-    animation: flap .4s steps(3) infinite alternate;
+.agogo-running {
+    animation: agogo-running-keyframes .2s steps(3) infinite alternate;
 }
 
-@keyframes flap {
+.agogo-running-left {
+    background: url(../images/agogo-running-left.svg) no-repeat;
+}
+
+.agogo-running-right {
+    background: url(../images/agogo-running-right.svg) no-repeat;
+}
+
+@keyframes agogo-running-keyframes {
     from { background-position:  0px; }
     to { background-position: -288px; }
 }
