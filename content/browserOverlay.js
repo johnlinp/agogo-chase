@@ -23,12 +23,7 @@ var AgogoChase = {
         }
 
         var agogo = doc.createElement('div');
-        agogo.style.background = 'black';
-        agogo.style.position = 'fixed';
-        agogo.style.left = '300px';
-        agogo.style.top = '300px';
-        agogo.style.height = '100px';
-        agogo.style.width = '100px';
+        agogo.setAttribute('id', 'agogo-chase');
         doc.body.appendChild(agogo);
     },
 };

@@ -3,3 +3,6 @@ skin      agogochase  classic/1.0   skin/
 locale    agogochase  en-US         locale/en-US/
 
 overlay chrome://browser/content/browser.xul  chrome://agogochase/content/browserOverlay.xul
+
+style   chrome://browser/content/browser.xul               chrome://agogochase/skin/browserOverlay.css
+style   chrome://agogochase/content/browserOverlay.xul     chrome://agogochase/skin/browserOverlay.css
