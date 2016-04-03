@@ -2,6 +2,7 @@
     position: fixed;
     height: 96px;
     width: 96px;
+    z-index: 300;
 }
 
 #agogo-chase-chair {
@@ -10,6 +11,7 @@
     width: 120px;
     visibility: hidden;
     background: url(../images/chair.svg);
+    z-index: 300;
 }
 
 .agogo-chase-grass {
@@ -17,6 +19,7 @@
     height: 12px;
     width: 48px;
     visibility: hidden;
+    z-index: 300;
 }
 
 .agogo-chase-grass-1 {
